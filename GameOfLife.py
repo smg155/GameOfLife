@@ -4,15 +4,8 @@ import random
 import time
 
 class Cell(object):
-
-    '''
-    Addition values for neighboring cells of a current cell.
-    '''
-    NEIGHBORING_CELLS = [[-1,-1], [0, -1], [1, -1],
-                         [-1, 0], [0, 0], [1, 0],
-                         [-1, 1], [0, 1], [1, 1]]
     
-    def __init__(self, amount, state):
+    def __init__(self, state):
         '''
         Constructor for the board cell objects. Initializes each
         cell to have a state value (either 0 or 1) to represent
@@ -20,7 +13,6 @@ class Cell(object):
         to represent how many neighbors of the cell are living.
         '''
         self.cell_state = state
-        self.amount_living_neighbors = amount
                  
 class GameBoard(object):
 
@@ -37,6 +29,24 @@ class GameBoard(object):
             self.grid = game_state
         for a in range(size_x):
             for b in range(size_y):
-                self.grid[b][a] = Cell(0, random.randint(0, 1))
+                self.grid[b][a] = Cell(random.randint(0, 1))
 
     def update(self):
+        '''
+        This method is more the backend of the program.
+        Basically how we decide how we want to update the
+        board. I think it would be best to wrap around the
+        board in the shape of torus with finite area but no
+        boundary so that patterns can continue even if they
+        reach the "edge" of the board. We can do this
+        in a relatively simple way and count the neighboring
+        cells at the same time.
+        '''
+
+    def play_game():
+        '''
+        The method to play the game.
+        '''
+
+if __name__ == "__main__":
+    play_game()
