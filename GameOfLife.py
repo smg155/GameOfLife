@@ -6,26 +6,6 @@ import time
 
 ##################################################
 '''
-Cell class.
-'''
-'''
-class Cell(object):
-    
-    def __init__(self, state):
-        ''''''
-        Constructor for the board cell objects. Initializes each
-        cell to have a state value (either 0 or 1) to represent
-        alive or dead, and an amount of living neighbors value
-        to represent how many neighbors of the cell are living.
-        ''''''
-        self.state = state
-
-    def get_state(self):
-        return self.state
-'''
-
-##################################################
-'''
 GameBoard Class.
 '''
 
