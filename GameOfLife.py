@@ -2,25 +2,27 @@
 import pygame
 from pygame.locals import *
 import random
+import time
 
 ##################################################
 '''
 Cell class.
 '''
-
+'''
 class Cell(object):
     
     def __init__(self, state):
-        '''
+        ''''''
         Constructor for the board cell objects. Initializes each
         cell to have a state value (either 0 or 1) to represent
         alive or dead, and an amount of living neighbors value
         to represent how many neighbors of the cell are living.
-        '''
+        ''''''
         self.state = state
 
     def get_state(self):
         return self.state
+'''
 
 ##################################################
 '''
@@ -45,19 +47,31 @@ class GameBoard(object):
         if self.height > 100:
             self.height = 100
         if self.it > 100:
-            self.it = 100 
-        self.grid = [[None for x in range(size_x)] for x in range(size_y)]
+            self.it = 100
+        self.grid = [[None for x in range(size_x)] for y in range(size_y)]
         if game_state is not None:
             self.grid = game_state
         for a in range(size_x):
             for b in range(size_y):
-                self.grid[b][a] = Cell(random.randint(0, 1))
+                self.grid[b][a] = random.randint(0, 1)
 
     def get_grid(self):
         return self.grid
 
     def get_iterations(self):
         return self.it
+
+    def adjacent(self, x, y):
+        '''
+        Counts the number of filled values are adjacent to the point.
+        '''
+        count = 0
+        for i in range(x - 1, x + 1):
+            for j in range(y - 1, y + 1):
+                if i != x or j != y:
+                    current_cell = self.grid[(j + self.height) % self.height][(i + self.width) % self.width]
+                    count += current_cell
+        return count
     
     def update(self):
         '''
@@ -84,19 +98,6 @@ class GameBoard(object):
                     next_state[j][i] = self.grid[j][i]
         self.grid = next_state
         return self.grid
-
-
-    def adjacent(self, x, y):
-        '''
-        Counts the number of filled values are adjacent to the point.
-        '''
-        count = 0
-        for i in range(x - 1, x + 1):
-            for j in range(y - 1, y + 1):
-                if i != x or j != y:
-                    current_cell = Cell(self.grid[(i + self.width) % self.width][(j + self.height) % self.height])
-                    count += current_cell.get_state()
-        return count
 
 ##################################################
 '''
@@ -166,7 +167,7 @@ def play_game():
                 quit()
         for r in range(int(numbers[0])):
             for c in range(int(numbers[1])):
-                if grid[c][r].get_state() == 1:
+                if grid[c][r] == 1:
                     pygame.draw.rect(background, (255, 255, 255), (r*10, c*10, 10, 10))
                 else:
                     pygame.draw.rect(background, (0, 0, 0), (r*10, c*10, 10, 10))
@@ -174,6 +175,7 @@ def play_game():
         screen.blit(background, (0, 0))
         pygame.display.update()
         i += 1
+        time.sleep(0.25)
     quit()
 
 if __name__ == '__main__':
