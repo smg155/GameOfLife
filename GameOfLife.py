@@ -1,11 +1,12 @@
 # Game of life program in Python 3
 import pygame
+from pygame.locals import *
 import random
 import time
 
 class Cell(object):
     
-    def __init__(self, position, state):
+    def __init__(self, state):
         '''
         Constructor for the board cell objects. Initializes each
         cell to have a state value (either 0 or 1) to represent
@@ -13,6 +14,9 @@ class Cell(object):
         to represent how many neighbors of the cell are living.
         '''
         self.cell_state = state
+
+    def get_state(self):
+        return self.cell_state
                  
 class GameBoard(object):
 
@@ -32,13 +36,16 @@ class GameBoard(object):
             size_y = 100
         if time > 100: #Not sure about this part exactly...
             time = 100 #Definitely have to research the time package
-        self.grid = [[x for x in range(size_x)] for x in range(size_y)]
+        self.grid = [[None for x in range(size_x)] for x in range(size_y)]
         if game_state is not None:
             self.grid = game_state
         for a in range(size_x):
             for b in range(size_y):
                 self.grid[b][a] = Cell(random.randint(0, 1))
 
+    def get_grid(self):
+        return self.grid
+    
     def update(self):
         '''
         This method is more the backend of the program.
@@ -79,14 +86,16 @@ class GameBoard(object):
         return count
 
 def text_format(message, x, y):
+    pygame.font.init()
     screen = pygame.display.set_mode((x, y))
-    font = pygame.font.SysFont(None, 25)
-    text = font.render("{}".format(message), True, (255, 160, 122))
-    return screen.blit(text, (x, y))
+    font = pygame.font.SysFont('Arial', 40, bold=True)
+    image = font.render(message, True, (255, 160, 120))
+    return screen.blit(image, (20, 20))
 
 def asking(message):
-    user_input = 0
-    text_format(message, 300, 400)
+    user_input = ''
+    text_format(message, 500, 500)
+    pygame.display.update()
     done = False
     while not done:
         for event in pygame.event.get():
@@ -94,28 +103,11 @@ def asking(message):
                 pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_0:
-                    user_input += int(chr(event.key))
-                if event.key == pygame.K_1:
-                    user_input += int(chr(event.key))
-                if event.key == pygame.K_2:
-                    user_input += int(chr(event.key))
-                if event.key == pygame.K_3:
-                    user_input += int(chr(event.key))
-                if event.key == pygame.K_4:
-                    user_input += int(chr(event.key))
-                if event.key == pygame.K_5:
-                    user_input += int(chr(event.key))
-                if event.key == pygame.K_6:
-                    user_input += int(chr(event.key))
-                if event.key == pygame.K_7:
-                    user_input += int(chr(event.key))
-                if event.key == pygame.K_8:
-                    user_input += int(chr(event.key))
-                if event.key == pygame.K_9:
-                    user_input += int(chr(event.key))
                 if event.key == pygame.K_RETURN:
-                    user_input = True
+                    done = True
+                else:
+                    key = pygame.key.name(event.key)
+                    user_input += key                   
     return user_input
 
 def game_introduction():
@@ -132,6 +124,7 @@ def game_introduction():
             nums[0] = asking("Board width: ")
             nums[1] = asking("Board height: ")
             nums[2] = asking("Number of iterations: ")
+            intro = False
     return nums
 
 def play_game():
@@ -144,15 +137,16 @@ def play_game():
     background.fill((0, 0, 0))
     numbers = game_introduction()
     pygame.display.update()
-    board = GameBoard(screen, numbers[0], numbers[1], numbers[2], None)
+    board = GameBoard(screen, int(numbers[0]), int(numbers[1]), int(numbers[2]), None)
+    grid = board.get_grid()
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 quit()
-        for r in range(numbers[0]):
-            for c in range(numbers[0]):
-                if grid[r][c].state == 1:
+        for r in range(int(numbers[0])):
+            for c in range(int(numbers[0])):
+                if grid[r][c].get_state() == 1:
                     pygame.draw.rect(background, (255, 255, 255), (r*10, c*10, 10, 10))
                 else:
                     pygame.draw.rect(background, (0, 0, 0), (r*10, c*10, 10, 10))
