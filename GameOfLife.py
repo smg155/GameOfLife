@@ -18,15 +18,10 @@ class Cell(object):
         alive or dead, and an amount of living neighbors value
         to represent how many neighbors of the cell are living.
         '''
-        self.CellState = state
+        self.state = state
 
-    @property
-    def CellState(self):
-        return self.__CellState
-
-    @CellState.setter
-    def CellState(self, state):
-        self.__CellState = state
+    def get_state(self):
+        return self.state
 
 ##################################################
 '''
@@ -100,8 +95,8 @@ class GameBoard(object):
         for i in range(x - 1, x + 1):
             for j in range(y - 1, y + 1):
                 if i != x or j != y:
-                    current_cell = self.grid[(i + self.width) % self.width][(j + self.height) % self.height]
-                    count += current_cell.CellState
+                    current_cell = Cell(self.grid[(i + self.width) % self.width][(j + self.height) % self.height])
+                    count += current_cell.get_state()
         return count
 
 ##################################################
@@ -149,6 +144,7 @@ def game_introduction():
             nums[1] = asking("Board height: ")
             nums[2] = asking("Number of iterations: ")
             intro = False
+            break
     return nums
 
 def play_game():
@@ -171,7 +167,7 @@ def play_game():
                 quit()
         for r in range(int(numbers[0])):
             for c in range(int(numbers[1])):
-                if grid[c][r].CellState == 1:
+                if grid[c][r].get_state() == 1:
                     pygame.draw.rect(background, (255, 255, 255), (r*10, c*10, 10, 10))
                 else:
                     pygame.draw.rect(background, (0, 0, 0), (r*10, c*10, 10, 10))
