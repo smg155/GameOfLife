@@ -24,6 +24,8 @@ class GameBoard(object):
         values for the board are greater than 100, sets the
         size values to 100. Does the same with time.
         '''
+        self.width = size_x
+        self.height = size_y
         if size_x > 100:
             size_x = 100
         if size_y > 100:
@@ -48,6 +50,33 @@ class GameBoard(object):
         in a relatively simple way and count the neighboring
         cells at the same time.
         '''
+        next_state = list(grid)
+        for i in range(self.width):
+            for j in range(self.height):
+                count = adjacent(i, j)
+                if count > 3:
+                    next_state[j][i] = 0
+                elif count < 2:
+                    next_state[j][i] = 0
+                elif count == 3:
+                    next_state[j][i] = 1
+                else:
+                    next_state[j][i] = self.grid[j][i]
+        self.grid = next_state
+        return self.grid
+
+
+    def adjacent(self, x, y):
+        '''
+        Counts the number of filled values are adjacent to the point.
+        '''
+        count = 0
+        for i in range(x - 1, x + 1):
+            for j in range(y - 1, y + 1):
+                if i != x or j != y:
+                    count += self.grid[(i + self.width) % self.width] \
+                             [(j + self.height) % self.width]
+        return count
 
     def play_game():
         '''
