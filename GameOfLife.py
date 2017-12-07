@@ -5,7 +5,7 @@ import time
 
 class Cell(object):
     
-    def __init__(self, state):
+    def __init__(self, position, state):
         '''
         Constructor for the board cell objects. Initializes each
         cell to have a state value (either 0 or 1) to represent
@@ -50,7 +50,7 @@ class GameBoard(object):
         in a relatively simple way and count the neighboring
         cells at the same time.
         '''
-        next_state = list(grid)
+        next_state = list(self.grid)
         for i in range(self.width):
             for j in range(self.height):
                 count = adjacent(i, j)
@@ -78,24 +78,87 @@ class GameBoard(object):
                              [(j + self.height) % self.width]
         return count
 
-    def play_game():
-        '''
-        The method to play the game.
-        '''
-        pygame.init()
-        screen = pygame.display.set_mode((600, 600))
-        background = pygame.Surface((600, 600))
-        background.fill(black)
-        '''
-        Ask for a board size and a run time.
-        Clearly have to do this before anything can work.
-        Probably want to have a pop up box ask this and
-        have the user input their answers and what not.
-        '''
-        board = GameBoard(screen, '''size_x''', '''size_y''', '''Time''', None)
-        while True:
-            #Play da game ya
-            
+def text_format(message, x, y):
+    screen = pygame.display.set_mode((x, y))
+    font = pygame.font.SysFont(None, 25)
+    text = font.render("{}".format(message), True, (255, 160, 122))
+    return screen.blit(text, (x, y))
 
-if __name__ == "__main__":
-    play_game()
+def asking(message):
+    user_input = 0
+    text_format(message, 300, 400)
+    done = False
+    while not done:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_0:
+                    user_input += int(chr(event.key))
+                if event.key == pygame.K_1:
+                    user_input += int(chr(event.key))
+                if event.key == pygame.K_2:
+                    user_input += int(chr(event.key))
+                if event.key == pygame.K_3:
+                    user_input += int(chr(event.key))
+                if event.key == pygame.K_4:
+                    user_input += int(chr(event.key))
+                if event.key == pygame.K_5:
+                    user_input += int(chr(event.key))
+                if event.key == pygame.K_6:
+                    user_input += int(chr(event.key))
+                if event.key == pygame.K_7:
+                    user_input += int(chr(event.key))
+                if event.key == pygame.K_8:
+                    user_input += int(chr(event.key))
+                if event.key == pygame.K_9:
+                    user_input += int(chr(event.key))
+                if event.key == pygame.K_RETURN:
+                    user_input = True
+    return user_input
+
+def game_introduction():
+    intro = True
+    nums = [0] * 3
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    intro = False
+            nums[0] = asking("Board width: ")
+            nums[1] = asking("Board height: ")
+            nums[2] = asking("Number of iterations: ")
+    return nums
+
+def play_game():
+    '''
+    The method to play the game.
+    '''
+    pygame.init()
+    screen = pygame.display.set_mode((500, 500))
+    background = pygame.Surface((500, 500))
+    background.fill((0, 0, 0))
+    numbers = game_introduction()
+    pygame.display.update()
+    board = GameBoard(screen, numbers[0], numbers[1], numbers[2], None)
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                quit()
+        for r in range(numbers[0]):
+            for c in range(numbers[0]):
+                if grid[r][c].state == 1:
+                    pygame.draw.rect(background, (255, 255, 255), (r*10, c*10, 10, 10))
+                else:
+                    pygame.draw.rect(background, (0, 0, 0), (r*10, c*10, 10, 10))
+        board.update()
+        screen.blit(background, (0, 0))
+        pygame.display.update()
+
+if __name__ == '__main__':
+	play_game()
