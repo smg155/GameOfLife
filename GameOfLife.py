@@ -4,6 +4,11 @@ from pygame.locals import *
 import random
 import time
 
+##################################################
+'''
+Cell class.
+'''
+
 class Cell(object):
     
     def __init__(self, state):
@@ -17,7 +22,12 @@ class Cell(object):
 
     def get_state(self):
         return self.cell_state
-                 
+
+##################################################
+'''
+GameBoard Class.
+'''
+
 class GameBoard(object):
 
     def __init__(self, screen, size_x, size_y, time, game_state=None):
@@ -30,21 +40,25 @@ class GameBoard(object):
         '''
         self.width = size_x
         self.height = size_y
-        if size_x > 100:
-            size_x = 100
-        if size_y > 100:
-            size_y = 100
-        if time > 100: #Not sure about this part exactly...
-            time = 100 #Definitely have to research the time package
+        self.it = time
+        if self.width > 100:
+            self.width = 100
+        if self.height > 100:
+            self.height = 100
+        if self.it > 100:
+            self.it = 100 
         self.grid = [[None for x in range(size_x)] for x in range(size_y)]
         if game_state is not None:
             self.grid = game_state
         for a in range(size_x):
             for b in range(size_y):
-                self.grid[b][a] = Cell(random.randint(0, 1))
+                self.grid[a][b] = Cell(random.randint(0, 1))
 
     def get_grid(self):
         return self.grid
+
+    def get_iterations(self):
+        return self.it
     
     def update(self):
         '''
@@ -60,7 +74,7 @@ class GameBoard(object):
         next_state = list(self.grid)
         for i in range(self.width):
             for j in range(self.height):
-                count = adjacent(i, j)
+                count = self.adjacent(i, j)
                 if count > 3:
                     next_state[j][i] = 0
                 elif count < 2:
@@ -81,9 +95,14 @@ class GameBoard(object):
         for i in range(x - 1, x + 1):
             for j in range(y - 1, y + 1):
                 if i != x or j != y:
-                    count += self.grid[(i + self.width) % self.width] \
-                             [(j + self.height) % self.width]
+                    current_cell = self.grid[(i + self.width) % self.width][(j + self.height) % self.height]
+                    count += current_cell.get_state()
         return count
+
+##################################################
+'''
+Main methods for the game.
+'''
 
 def text_format(message, x, y):
     pygame.font.init()
@@ -138,8 +157,10 @@ def play_game():
     numbers = game_introduction()
     pygame.display.update()
     board = GameBoard(screen, int(numbers[0]), int(numbers[1]), int(numbers[2]), None)
+    board.update()
     grid = board.get_grid()
-    while True:
+    i = 0
+    while i < board.get_iterations():
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -153,6 +174,7 @@ def play_game():
         board.update()
         screen.blit(background, (0, 0))
         pygame.display.update()
+        i += 1
 
 if __name__ == '__main__':
 	play_game()
