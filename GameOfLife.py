@@ -18,10 +18,15 @@ class Cell(object):
         alive or dead, and an amount of living neighbors value
         to represent how many neighbors of the cell are living.
         '''
-        self.cell_state = state
+        self.CellState = state
 
-    def get_state(self):
-        return self.cell_state
+    @property
+    def CellState(self):
+        return self.__CellState
+
+    @CellState.setter
+    def CellState(self, state):
+        self.__CellState = state
 
 ##################################################
 '''
@@ -52,7 +57,7 @@ class GameBoard(object):
             self.grid = game_state
         for a in range(size_x):
             for b in range(size_y):
-                self.grid[a][b] = Cell(random.randint(0, 1))
+                self.grid[b][a] = Cell(random.randint(0, 1))
 
     def get_grid(self):
         return self.grid
@@ -96,7 +101,7 @@ class GameBoard(object):
             for j in range(y - 1, y + 1):
                 if i != x or j != y:
                     current_cell = self.grid[(i + self.width) % self.width][(j + self.height) % self.height]
-                    count += current_cell.get_state()
+                    count += current_cell.CellState
         return count
 
 ##################################################
@@ -157,7 +162,6 @@ def play_game():
     numbers = game_introduction()
     pygame.display.update()
     board = GameBoard(screen, int(numbers[0]), int(numbers[1]), int(numbers[2]), None)
-    board.update()
     grid = board.get_grid()
     i = 0
     while i < board.get_iterations():
@@ -166,8 +170,8 @@ def play_game():
                 pygame.quit()
                 quit()
         for r in range(int(numbers[0])):
-            for c in range(int(numbers[0])):
-                if grid[r][c].get_state() == 1:
+            for c in range(int(numbers[1])):
+                if grid[c][r].CellState == 1:
                     pygame.draw.rect(background, (255, 255, 255), (r*10, c*10, 10, 10))
                 else:
                     pygame.draw.rect(background, (0, 0, 0), (r*10, c*10, 10, 10))
@@ -175,6 +179,7 @@ def play_game():
         screen.blit(background, (0, 0))
         pygame.display.update()
         i += 1
+    quit()
 
 if __name__ == '__main__':
 	play_game()
