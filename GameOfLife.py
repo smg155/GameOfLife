@@ -170,7 +170,7 @@ def play_game():
         screen.blit(background, (0, 0))
         pygame.display.update()
         i += 1
-        time.sleep(0.25)
+        time.sleep(0.1)
     quit()
 
 if __name__ == '__main__':
