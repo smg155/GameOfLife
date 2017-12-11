@@ -26,8 +26,8 @@ class GameBoard(object):
             self.width = 100
         if self.height > 100:
             self.height = 100
-        if self.it > 100:
-            self.it = 100
+        if self.it > 1000:
+            self.it = 1000
         self.grid = [[0 for x in range(size_x)] for y in range(size_y)]
         if game_state is not None:
             self.grid = game_state
