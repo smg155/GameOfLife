@@ -11,7 +11,7 @@ GameBoard Class.
 
 class GameBoard(object):
 
-    def __init__(self, screen, size_x, size_y, time, game_state=None):
+    def __init__(self, screen, size_x, size_y, time, random_or_not, game_state=None):
         '''
         Constructor for the board object. Initializes
         a 2D array integers with the default value of zero
@@ -28,12 +28,25 @@ class GameBoard(object):
             self.height = 100
         if self.it > 100:
             self.it = 100
-        self.grid = [[None for x in range(size_x)] for y in range(size_y)]
+        self.grid = [[0 for x in range(size_x)] for y in range(size_y)]
         if game_state is not None:
             self.grid = game_state
-        for a in range(size_x):
-            for b in range(size_y):
-                self.grid[b][a] = random.randint(0, 1)
+        if random_or_not == 0:
+            for a in range(size_x):
+                for b in range(size_y):
+                    self.grid[b][a] = random.randint(0, 1)
+        else:
+            for a in range(size_x):
+                for b in range(size_y):
+                    if a == 2 and b == 1:
+                        self.grid[b][a] = 1
+                    elif a == 3 and b == 2:
+                        self.grid[b][a] = 1
+                    elif (a == 1 or a == 2 or a == 3) and b == 3:
+                        self.grid[b][a] = 1
+                    else:
+                        self.grid[b][a] = 0
+                    
 
     def get_grid(self):
         return self.grid
@@ -46,10 +59,10 @@ class GameBoard(object):
         Counts the number of filled values are adjacent to the point.
         '''
         count = 0
-        for i in range(x - 1, x + 1):
-            for j in range(y - 1, y + 1):
+        for i in range(x - 1, x + 2):
+            for j in range(y - 1, y + 2):
                 if i != x or j != y:
-                    current_cell = self.grid[(j + self.height) % self.height][(i + self.width) % self.width]
+                    current_cell = self.grid[(j + self.width) % self.width][(i + self.width) % self.width]
                     count += current_cell
         return count
     
@@ -64,18 +77,19 @@ class GameBoard(object):
         in a relatively simple way and count the neighboring
         cells at the same time.
         '''
-        next_state = list(self.grid)
+        next_state = [[0 for x in range(self.width)] for y in range(self.height)]
+        for a in range(self.width):
+                for b in range(self.height):
+                    next_state[b][a] = self.grid[b][a]
         for i in range(self.width):
             for j in range(self.height):
                 count = self.adjacent(i, j)
-                if count > 3:
-                    next_state[j][i] = 0
-                elif count < 2:
-                    next_state[j][i] = 0
-                elif count == 3:
+                if self.grid[j][i] == 1 and 2 <= count <= 3:
                     next_state[j][i] = 1
                 else:
-                    next_state[j][i] = self.grid[j][i]
+                    next_state[j][i] = 0
+                if self.grid[j][i] == 0 and count == 3:
+                    next_state[j][i] = 1
         self.grid = next_state
         return self.grid
 
@@ -93,7 +107,7 @@ def text_format(message, x, y):
 
 def asking(message):
     user_input = ''
-    text_format(message, 500, 500)
+    text_format(message, 700, 700)
     pygame.display.update()
     done = False
     while not done:
@@ -111,7 +125,7 @@ def asking(message):
 
 def game_introduction():
     intro = True
-    nums = [0] * 3
+    nums = [0] * 4
     while intro:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -123,6 +137,7 @@ def game_introduction():
             nums[0] = asking("Board width: ")
             nums[1] = asking("Board height: ")
             nums[2] = asking("Number of iterations: ")
+            nums[3] = asking("Random or Glider (Type 0 or 1):")
             intro = False
             break
     return nums
@@ -132,12 +147,12 @@ def play_game():
     The method to play the game.
     '''
     pygame.init()
-    screen = pygame.display.set_mode((500, 500))
-    background = pygame.Surface((500, 500))
+    screen = pygame.display.set_mode((700, 700))
+    background = pygame.Surface((700, 700))
     background.fill((0, 0, 0))
     numbers = game_introduction()
     pygame.display.update()
-    board = GameBoard(screen, int(numbers[0]), int(numbers[1]), int(numbers[2]), None)
+    board = GameBoard(screen, int(numbers[0]), int(numbers[1]), int(numbers[2]), int(numbers[3]), None)
     grid = board.get_grid()
     i = 0
     while i < board.get_iterations():
@@ -151,7 +166,7 @@ def play_game():
                     pygame.draw.rect(background, (255, 255, 255), (r*10, c*10, 10, 10))
                 else:
                     pygame.draw.rect(background, (0, 0, 0), (r*10, c*10, 10, 10))
-        board.update()
+        grid = board.update()
         screen.blit(background, (0, 0))
         pygame.display.update()
         i += 1
